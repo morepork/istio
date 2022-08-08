@@ -490,17 +490,9 @@ func stringMatchConflict(root, leaf *networking.StringMatch) bool {
 	if root == nil || leaf == nil {
 		return false
 	}
-	// If root regex match is specified, delegate should not have other matches.
-	if root.GetRegex() != "" {
-		if leaf.GetRegex() != "" || leaf.GetPrefix() != "" || leaf.GetExact() != "" {
-			return true
-		}
-	}
-	// If delgate regex match is specified, root should not have other matches.
-	if leaf.GetRegex() != "" {
-		if root.GetRegex() != "" || root.GetPrefix() != "" || root.GetExact() != "" {
-			return true
-		}
+	// regex match is only allowed in either root or leaf if they're identical
+	if root.GetRegex() != "" || leaf.GetRegex() != "" {
+		return root.GetRegex() != leaf.GetRegex()
 	}
 	// root is exact match
 	if exact := root.GetExact(); exact != "" {
